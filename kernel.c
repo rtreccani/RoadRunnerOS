@@ -34,5 +34,6 @@ void kernel_main(void)
 		page[i] = i;
 	}
 	/* enable MMU here */
+	enable_paging();
 	for(;;);
 }

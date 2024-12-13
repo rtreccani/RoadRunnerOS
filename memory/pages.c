@@ -1,6 +1,7 @@
 #include "pages.h"
 #include "memory.h"
 #include "basic_framebuffer.h"
+#include "memory_internal.h"
 
 page_directory_entry_t* page_directory;
 
@@ -44,4 +45,26 @@ void* add_page_table_entry(int page_directory_idx, int page_table_idx)
     page_table->page_frame_addr = page_addr;
     page_table->present = true;
     return (void*)(page_addr << 12);
+}
+
+void identity_map_kernel(void* kernel_start, void* kernel_end)
+{
+    kernel_start = kernel_start & 0xFFFFF000;
+    kernel_end = (kernel_end & 0xFFFFF000) + 0x00001000;
+    kernel_page = kernel_start;
+    while(kernel_page < kernel_end)
+    {
+        uint32_t page_directory_idx = (((uint32_t)kernel_page) & 0xFFC00000) >> 22;
+        uint32_t page_table_idx = (((uint32_t)kernel_page) &     0x003FF000) >> 12;
+        catch_uninitalised_page_directory();
+        if(!page_directory[page_directory_idx])
+        {
+            add_page_table_entry(page_directory_idx, 
+        }
+    }
+}
+
+void enable_paging()
+{
+    _enable_paging();
 }

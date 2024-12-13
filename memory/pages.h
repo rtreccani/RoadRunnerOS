@@ -39,3 +39,4 @@ _Static_assert(sizeof(page_directory_entry_t) == 4, "page directory entry size i
 void create_page_directory();
 void create_page_table();
 void* add_page_table_entry(int page_directory_idx, int page_table_idx);
+void enable_paging();

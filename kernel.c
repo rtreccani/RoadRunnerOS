@@ -24,16 +24,17 @@ void kernel_main(void)
 	initialise_timers();
 	initialise_keyboard();
 	kenable_interrupts();
-	uint32_t aligned_start = align_to((uint32_t)&_kernel_end, 4096);
-	kmemory_space_assign((void*)aligned_start, 50000);
-	create_page_directory();
-	create_page_table(0);
-	uint32_t* page = add_page_table_entry(0, 0);
-	for(int i = 0; i < 1024; i++)
-	{
-		page[i] = i;
-	}
-	/* enable MMU here */
+	uint32_t aligned_start = (uint32_t)round_up_to_page_address(&_kernel_end);
+	kmemory_space_assign((void*)aligned_start, 50000000);
+
+	page_directory_entry_t* system_directory = create_page_directory();
+
+	identity_map(system_directory, 0, &_kernel_end);
+
+	set_active_page_directory(system_directory);
+
+	// /* enable MMU here */
 	enable_paging();
+	kprintf("enabled paging and didn't blow up!!!!!!\n");
 	for(;;);
 }

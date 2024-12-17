@@ -24,6 +24,21 @@ _Static_assert(sizeof(block_prefix_t) == 8, "block prefix heap size is wrong!");
 uint32_t align_to(uint32_t base, uint32_t align);
 
 /**
+ * @brief round down an address to the nearest page address
+ * @param fine_address the address to return.
+ * @return fine_address, rounded down to the nearest multiple of 4096
+ */
+void* round_down_to_page_address(void* fine_address);
+
+/**
+ * @brief round up an address to the nearest page address
+ * @param fine_address the address to return.
+ * @return fine_address, rounded up to the nearest multiple of 4096
+ */
+void* round_up_to_page_address(void* fine_address);
+
+
+/**
  * @brief tell the kernel to create a heap memory of a given size/location.
  * @param start a pointer to the beginning of the available memory for the heap.
  * @param len the size of the heap, in bytes.
@@ -36,6 +51,15 @@ void kmemory_space_assign(void* start, uint32_t len);
  * @return the pointer to the requested memory, else null to indicate the memory couldn't be allocated.
  */
 void* kmemory_assign_chunk(uint32_t size);
+
+/**
+ * @brief assign a region of memory to the callee, with the start address guaranteed to be a multiple of 4096 bytes.
+ * this is used for assigning page tables in the virtual memory manager, as the page directory and table use a 20 bit
+ * pointer (with the bottom 12 bits assumed to be all 0's).
+ * @param size the requested minimum length of memory to be allocated.
+ * @return the pointer to the requested memory, else null to indicate the memory couldn't be allocated.
+ */
+void* kmemory_assign_page_aligned_chunk(uint32_t size);
 
 /**
  * @brief free a given block of memory that was previously requested via malloc.

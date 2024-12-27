@@ -6,6 +6,8 @@
 #define PAGE_TABLE_SPAN  0b00000000000000000000001111111111
 #define PAGE_OFFSET_SPAN 0b00000000000000000000111111111111
 
+#define PAGE_SIZE 4096
+
 typedef struct __attribute__((packed))
 {
     bool present : 1;

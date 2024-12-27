@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "pages.h"
 #include "stdmem.h"
+#include "tasks.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -31,18 +32,17 @@ void kernel_main(void)
 
 	identity_map(system_directory, 0, &_kernel_end);
 
-	// uint32_t* little_address = (uint32_t*)0x500000;
-
-	// map_virtual_page_to_physical_page(system_directory, (void*)little_address, (void*)big_address);
 	// /* enable MMU here */
 	set_active_page_directory(system_directory);
+	initialise_multitasking();
 
-	// kprintf("number is: %d\n", *little_address);
-	// for(int i = 3; i >=0; i--)
-	// {
-	// 	kprintf("12 / %d = %d\n", i, 12/i);
-	// }
+	void bar()
+	{
+		kprintf("WE SURVIVED YEAHH\n");
+	}
 
+	entry_point_t bar_entry = &bar;
+	create_new_task(bar_entry);
 
 	for(;;);
 }
